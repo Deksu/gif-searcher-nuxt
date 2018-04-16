@@ -1,64 +1,125 @@
 <template>
-  <section class="container">
-    <div>
-      <app-logo/>
-      <h1 class="title">
-        gif-searcher-nuxt
-      </h1>
-      <h2 class="subtitle">
-        gif searcher using vue and nuxt.js
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
-      </div>
+  <div id="app">
+    <h1>Simple GIF Searcher</h1>
+    <input v-model="searchTerm" type="text" v-on:keyup.enter="getGifs()">
+    <button class="button" @click="getGifs()">Search</button>
+
+    <div class="gif-container">
+      <img v-for="gif in gifs" :src="gif" :key="gif.id"> <!-- For loop through gif array, displaying each gif on the page using the :src attribute -->
     </div>
-  </section>
+
+    <!-- <p class="error-msg">Cant copy, hit Ctrl + C!</p>
+    <button class="button" @click="getUrl()">URL</button> -->
+  </div>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
-
 export default {
-  components: {
-    AppLogo
+  data() {
+    return {
+      searchTerm: "",
+      gifs: []
+    };
+  },
+  methods: {
+    getGifs() {
+      console.log(this.searchTerm);
+      
+      let apiKey = "dc6zaTOxFJmzC"; // using public Giphy API key
+      let searchEndPoint = "https://api.giphy.com/v1/gifs/search?"; // endpoint for gif search
+      let limit = 5; // limiting to 5 gifs
+
+      // Using ES6 template to join variables which were set above to the url variable
+
+      let url = `${searchEndPoint}&api_key=${apiKey}&q=${
+        this.searchTerm
+      }&limit=${limit}`;
+      
+      // Fetching using the URL string. Fetch returns a promise, this is called with then(). Returning the response as json. In case of an error, we catch it.
+
+      fetch(url)
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          this.buildGifs(json);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // Taking json from API and entering the data part. Map each returned gif to its id. Then take the id and plug it into a url.
+
+    buildGifs(json) {
+      this.gifs = json.data
+      .map(gif => gif.id)
+      .map(gifId => {
+        return `https://media.giphy.com/media/${gifId}/giphy.gif`;
+      });
+    },
+      getUrl() {
+        const images = document.querySelectorAll('img');
+
+        images.forEach(img => {
+          img.addEventListener('click', () => {
+            var imgSource = img.src;
+            alert(imgSource);
+            console.log("Getting img source");
+            // TODO: Add copy functionality to this, execCommand copy or vue clipboard?
+          });
+        });
+      },
+      combineGet() {
+        // combining getGifs and getUrl functions so they can be called at the same time
+        // TODO: Fix getUrl so it works straight away, now it basically needs a doubleclick.
+        this.getGifs();
+        this.getUrl();
+      },
   }
-}
+};
 </script>
 
 <style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
+input {
+  padding: 5px;
+  margin-bottom: 20px;
+}
+
+.button {
+  background-color: rgb(129, 216, 208);
+  font-size: 1.2em;
+  color: #fff;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 3px;
   display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+  margin: 0 auto;
 }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+.button:hover {
+  background-color: rgb(129, 216, 208, 0.8);
 }
 
-.links {
-  padding-top: 15px;
+ /* Styling the gif portion using flexbox */
+
+.gif-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gif-container > img {
+  margin: 20px 5px;
 }
 </style>
