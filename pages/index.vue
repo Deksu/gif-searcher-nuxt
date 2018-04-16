@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <h1>Simple GIF Searcher</h1>
-    <input v-model="searchTerm" type="text" v-on:keyup.enter="getGifs()">
+    <h1 id="topic">Simple GIF Searcher</h1>
+
+    <input class="input-box" v-model="searchTerm" type="text" v-on:keyup.enter="getGifs()">
+
     <button class="button" @click="getGifs()">Search</button>
 
     <div class="gif-container">
       <img v-for="gif in gifs" :src="gif" :key="gif.id"> <!-- For loop through gif array, displaying each gif on the page using the :src attribute -->
     </div>
 
-    <!-- <p class="error-msg">Cant copy, hit Ctrl + C!</p>
-    <button class="button" @click="getUrl()">URL</button> -->
   </div>
 </template>
 
@@ -90,9 +90,13 @@ export default {
   margin-top: 60px;
 }
 
-input {
-  padding: 5px;
-  margin-bottom: 20px;
+#topic {
+  margin-bottom: 40px;
+}
+
+.input-box {
+  padding-top: 5px;
+  margin-bottom: 40px;
 }
 
 .button {
