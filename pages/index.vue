@@ -2,7 +2,17 @@
   <div id="app">
     <h1 id="topic">Simple GIF Searcher</h1>
 
+    <div class="input-area">
+    <p class="text">Amount of GIFs you want to see (max 10)</p>
+
+    
+    <input class="input-box" id="quantityNumber" type="number" name="quantity" min="1" max="10" v-model="gifQuantity">
+    
+
+    <p class="text">Enter your search word below</p>
     <input class="input-box" v-model="searchTerm" type="text" v-on:keyup.enter="getGifs()">
+
+    </div>
 
     <button class="button" @click="getGifs()">Search</button>
 
@@ -17,6 +27,7 @@
 export default {
   data() {
     return {
+      gifQuantity: 5,
       searchTerm: "",
       gifs: []
     };
@@ -27,7 +38,17 @@ export default {
       
       let apiKey = "dc6zaTOxFJmzC"; // using public Giphy API key
       let searchEndPoint = "https://api.giphy.com/v1/gifs/search?"; // endpoint for gif search
-      let limit = 5; // limiting to 5 gifs
+      // let limit = 5; // limiting to 5 gifs
+
+      let limit = this.gifQuantity;
+
+        if (limit == 69) {
+        alert('Soooooooooooooooooo funny! Get out. Limiting your GIFs to the max.');
+        limit = 10;
+      } else if (limit > 10) {
+        alert('Maximum amount is 10, limiting to the max amount. Seeing too many GIFs on one page is harmful for your mental health!');
+        limit = 10;
+      }
 
       // Using ES6 template to join variables which were set above to the url variable
 
@@ -94,9 +115,16 @@ export default {
   margin-bottom: 40px;
 }
 
+.text {
+  margin: 20px 0px;
+}
+
+.input-area {
+  margin: 10px 10px;
+}
 .input-box {
   padding-top: 5px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .button {
